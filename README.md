@@ -257,3 +257,8 @@ A continuación dejamos una imagen de nuestro tablero.
 ![Tablero trello](https://github.com/sara-rioseco/DEV007-social-network/blob/main/src/img/project/trello.JPG?raw=true)
 
 Además de Trello utilizamos Google calendar para agendar horarios de almuerzo y reuniones fuera del horario de bootcamp según nuestra disponibilidad.
+
+## 7. Link de proyecto
+¿Amante de los animales? ¡Esta es tu comunidad!  
+* [Ingresa Aqui](https://pets--diaries.web.app/)
+
