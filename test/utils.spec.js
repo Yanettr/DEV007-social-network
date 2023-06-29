@@ -51,21 +51,40 @@ beforeEach(() => {
   jest.clearAllMocks();
 });
 
-describe('updateUsername', () => {
+describe('addLike', () => {
   it('should be a function', () => {
-    expect(typeof updateUsername).toBe('function');
+    expect(typeof addLike).toBe('function');
   });
 
-  it('should call updateProfile()', async () => {
-    const updateProfileMock = jest.fn().mockResolvedValue();
-    updateProfile.mockImplementationOnce(updateProfileMock);
-    await updateUsername('myNewName', '');
-    expect(updateProfileMock).toHaveBeenCalled();
+  it('should call updateDoc() to add a like', async () => {
+    const docId = '123456789'; // Assuming a valid docId
+    const updateDocMock = jest.fn().mockRejectedValue(new Error('Mock error'));
+    updateDoc.mockImplementationOnce(updateDocMock);
+    const likes = ['testuser@example.com']; // Provide an array with existing likes
+    await addLike(docId, likes);
+    expect(updateDocMock).toHaveBeenCalled();
   });
-  it('should throw an error', async () => {
-    const updateProfileMock = jest.fn(() => Promise.reject(new Error('Mock error')));
-    updateProfile.mockImplementation(updateProfileMock);
-    await expect(updateUsername('myNewName', '')).rejects.toThrowError('Mock error');
+
+  it('should throw an error when updateDoc() is rejected', async () => {
+    const docId = '123456789'; // Assuming a valid docId
+    const updateDocMock = jest.fn().mockImplementation(() => Promise.reject(new Error('Mock error')));
+    updateDoc.mockImplementation(updateDocMock);
+    const likes = ['test@example.com']; // Provide an array with existing likes
+    addLike(docId, likes);
+    await expect(updateDocMock).rejects.toThrowError('Mock error');
+  });
+});
+
+describe('removeLike', () => {
+  it('should be a function', () => {
+    expect(typeof removeLike).toBe('function');
+  });
+  it('should call updateDoc() to remove a like', async () => {
+    const docId = '123456789'; // Assuming a valid docId
+    const updateDocMock = jest.fn().mockResolvedValue();
+    updateDoc.mockImplementationOnce(updateDocMock);
+    await removeLike(docId);
+    expect(updateDocMock).toHaveBeenCalled();
   });
 });
 
@@ -106,6 +125,24 @@ describe('userGoogleLogin', () => {
   });
 });
 
+describe('updateUsername', () => {
+  it('should be a function', () => {
+    expect(typeof updateUsername).toBe('function');
+  });
+
+  it('should call updateProfile()', async () => {
+    const updateProfileMock = jest.fn().mockResolvedValue();
+    updateProfile.mockImplementationOnce(updateProfileMock);
+    await updateUsername('myNewName', '');
+    expect(updateProfileMock).toHaveBeenCalled();
+  });
+  it('should throw an error', async () => {
+    const updateProfileMock = jest.fn(() => Promise.reject(new Error('Mock error')));
+    updateProfile.mockImplementation(updateProfileMock);
+    await expect(updateUsername('myNewName', '')).rejects.toThrowError('Mock error');
+  });
+});
+
 describe('userLogout', () => {
   it('should be a function', () => {
     expect(typeof userLogout).toBe('function');
@@ -133,6 +170,7 @@ describe('editPost', () => {
   it('should be a function', () => {
     expect(typeof editPost).toBe('function');
   });
+
   it('should call updateDoc() to edit a post', async () => {
     await editPost('my new content', '');
     expect(updateDoc).toHaveBeenCalled();
@@ -143,6 +181,7 @@ describe('deletePost', () => {
   it('should be a function', () => {
     expect(typeof deletePost).toBe('function');
   });
+
   it('should call deleteDoc() to delete a post', async () => {
     const deleteDocMock = jest.fn().mockResolvedValue();
     const getIdTokenMock = jest.fn().mockResolvedValue(true);
@@ -151,6 +190,7 @@ describe('deletePost', () => {
     await deletePost('123456789'); // Assuming a valid docId
     expect(deleteDoc).toHaveBeenCalled();
   });
+
   it('should throw an error', async () => {
     const deleteDocMock = jest.fn().mockResolvedValue();
     const getIdTokenMock = jest.fn().mockImplementation(() => Promise.reject(new Error('Mock error')));
@@ -160,47 +200,11 @@ describe('deletePost', () => {
   });
 });
 
-describe('addLike', () => {
-  it('should be a function', () => {
-    expect(typeof addLike).toBe('function');
-  });
-
-  it('should call updateDoc() to add a like', async () => {
-    const docId = '123456789'; // Assuming a valid docId
-    const updateDocMock = jest.fn().mockRejectedValue(new Error('Mock error'));
-    updateDoc.mockImplementationOnce(updateDocMock);
-    const likes = ['testuser@example.com']; // Provide an array with existing likes
-    await addLike(docId, likes);
-    expect(updateDocMock).toHaveBeenCalled();
-  });
-
-  it('should throw an error when updateDoc() is rejected', async () => {
-    const docId = '123456789'; // Assuming a valid docId
-    const updateDocMock = jest.fn().mockImplementation(() => Promise.reject(new Error('Mock error')));
-    updateDoc.mockImplementation(updateDocMock);
-    const likes = ['test@example.com']; // Provide an array with existing likes
-    addLike(docId, likes);
-    await expect(updateDocMock).rejects.toThrowError('Mock error');
-  });
-});
-
-describe('removeLike', () => {
-  it('should be a function', () => {
-    expect(typeof removeLike).toBe('function');
-  });
-  it('should call updateDoc() to remove a like', async () => {
-    const docId = '123456789'; // Assuming a valid docId
-    const updateDocMock = jest.fn().mockResolvedValue();
-    updateDoc.mockImplementationOnce(updateDocMock);
-    await removeLike(docId);
-    expect(updateDocMock).toHaveBeenCalled();
-  });
-});
-
 describe('getLoggedUser', () => {
   it('should be a function', () => {
     expect(typeof getLoggedUser).toBe('function');
   });
+
   it('should return the displayName of current user', async () => {
     await getLoggedUser();
     expect(getLoggedUser()).toBe('Test User');
